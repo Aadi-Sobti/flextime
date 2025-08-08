@@ -47,8 +47,8 @@
       const data = parseJwt(response.credential);
       const email = data.email;
 
-      if(email && email.toLowerCase().endsWith("@bvsd.org")) {
-        // Redirect or proceed
+      if(email && email.toLowerCase().endsWith("@gmail.com")) {
+        sessionStorage.setItem('userName', data.name);
         window.location.href = "dashboard.html";
       } else {
         document.getElementById('error-message').innerText = 
