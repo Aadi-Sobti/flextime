@@ -1,0 +1,210 @@
+<!-- teacher.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Teacher Dashboard - BVSD Classroom Scheduler</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body class="section-padded centered-content">
+
+  <h1 class="section-title">Teacher Dashboard</h1>
+  <div id="sub" style="max-width: 1000px; width: 100%;">
+
+    <div id="welcome" style="margin-bottom: 30px; text-align:center;"></div>
+
+    <section id="classroom-info" style="margin-bottom: 30px;">
+      <h2>Your Classroom: <span id="classroom-name" style="color:#00bfff;"></span></h2>
+      <div id="classroom-controls">
+        <button id="create-classroom" class="carousel-button" style="display:none; margin-top: 12px;">Create Classroom</button>
+        <div id="classroom-status" style="margin-top:12px;"></div>
+      </div>
+    </section>
+
+    <section id="search" style="margin-bottom: 30px;">
+      <h2 class="section-title">Search Students</h2>
+      <input id="search-input" type="text" placeholder="Search by first, last, grade..." style="width:100%; padding:12px; border-radius:8px; border:1px solid #00bfff; font-size:1rem;">
+      <div id="search-results" style="margin-top:12px; max-height:320px; overflow:auto; background:#0b0b0b; border:1px solid rgba(0,191,255,0.08); padding:8px; border-radius:8px;"></div>
+    </section>
+
+    <section id="roster" style="margin-bottom: 30px;">
+      <h2 class="section-title">Your Roster</h2>
+      <div id="roster-list" style="max-height:300px; overflow:auto; background:#0b0b0b; border:1px solid rgba(0,191,255,0.08); padding:8px; border-radius:8px;"></div>
+    </section>
+
+    <section id="queue" style="margin-bottom: 30px;">
+      <h2 class="section-title">Your Queue</h2>
+      <div id="queue-list" style="max-height:300px; overflow:auto; background:#0b0b0b; border:1px solid rgba(0,191,255,0.08); padding:8px; border-radius:8px;"></div>
+    </section>
+
+  </div>
+
+<script>
+  // CONFIG: set this to the URL of your deployed Apps Script web app
+  const WEB_APP_URL = 'https://script.google.com/macros/s/AKfycbx_Mv8aBHy-Kwhp8qVv48NR6zcmQ3H96tYhcti2yUoDAidyg-UG2rDVFmQXrx3wfGXmCA/exec';
+
+  // helper for calling web app
+  async function apiGet(action, params = {}) {
+    params.action = action;
+    const q = new URLSearchParams(params).toString();
+    const url = `${WEB_APP_URL}?${q}`;
+    const res = await fetch(url);
+    return res.json();
+  }
+
+  // UI
+  const userName = sessionStorage.getItem('userName') || '';
+  const classroomNameEl = document.getElementById('classroom-name');
+  const welcomeEl = document.getElementById('welcome');
+  const createBtn = document.getElementById('create-classroom');
+  const statusEl = document.getElementById('classroom-status');
+  const searchInput = document.getElementById('search-input');
+  const resultsEl = document.getElementById('search-results');
+  const rosterEl = document.getElementById('roster-list');
+  const queueEl = document.getElementById('queue-list');
+
+  if (!userName) {
+    window.location.href = 'login.html';
+  } else {
+    welcomeEl.innerHTML = `<p style="font-size:1.25rem;">Welcome, <strong>${escapeHtml(userName)}</strong></p>`;
+  }
+
+  const classroomName = userName; // classroom named after teacher
+
+  async function init() {
+    classroomNameEl.textContent = classroomName;
+
+    statusEl.textContent = 'Checking classroom...';
+    const check = await apiGet('checkClassroom', { classroom: classroomName });
+    if (check && check.exists) {
+      statusEl.textContent = 'Classroom loaded.';
+      createBtn.style.display = 'none';
+    } else {
+      statusEl.textContent = 'You do not have a classroom yet.';
+      createBtn.style.display = 'inline-block';
+    }
+
+    createBtn.addEventListener('click', async () => {
+      createBtn.disabled = true;
+      statusEl.textContent = 'Creating classroom...';
+      const res = await apiGet('createClassroom', { classroom: classroomName });
+      if (res && res.success) {
+        statusEl.textContent = 'Classroom created.';
+        createBtn.style.display = 'none';
+        await loadRoster();
+      } else {
+        statusEl.textContent = res.message || 'Failed to create classroom';
+        createBtn.disabled = false;
+      }
+    });
+
+    searchInput.addEventListener('input', debounce(async e => {
+      const q = e.target.value.trim();
+      if (q.length < 2) {
+        resultsEl.innerHTML = '<div style="padding:8px;color:#aaa">Type 2+ chars to search.</div>';
+        return;
+      }
+      resultsEl.innerHTML = '<div style="padding:8px;color:#aaa">Searching...</div>';
+      const r = await apiGet('searchStudents', { query: q });
+      if (!r || !r.students || r.students.length === 0) {
+        resultsEl.innerHTML = '<div style="padding:8px;color:#aaa">No students found.</div>';
+        return;
+      }
+      resultsEl.innerHTML = r.students.map(s => studentRowHtml(s)).join('');
+    }, 300));
+
+    resultsEl.addEventListener('click', async ev => {
+      const btn = ev.target.closest('.add-btn');
+      if (!btn) return;
+      const studentId = btn.getAttribute('data-id');
+      const firstName = btn.getAttribute('data-first');
+      const lastName = btn.getAttribute('data-last');
+      const grade = btn.getAttribute('data-grade');
+      const rowNumber = btn.getAttribute('data-row');
+
+      btn.disabled = true;
+      btn.textContent = 'Requesting...';
+
+      const res = await apiGet('addStudentRequest', {
+        studentId, firstName, lastName, grade,
+        teacherName: classroomName, rowNumber
+      });
+
+      await loadRoster();
+      await loadQueue();
+
+      if (res.assigned) {
+        alert('Student assigned to your classroom.');
+      } else if (res.queued) {
+        alert('Student already assigned — added to queue (position: ' + (res.position || '?') + ').');
+      } else {
+        alert('Error: ' + (res.message || 'unknown'));
+      }
+    });
+
+    await loadRoster();
+    await loadQueue();
+  }
+
+  function studentRowHtml(s) {
+    return `
+      <div style="display:flex;justify-content:space-between;align-items:center;padding:8px;border-bottom:1px solid rgba(0,191,255,0.04);">
+        <div>
+          <div style="font-weight:700">${escapeHtml(s.firstName)} ${escapeHtml(s.lastName)}</div>
+          <div style="color:#9aa; font-size:0.95rem;">Grade ${escapeHtml(s.grade)}</div>
+        </div>
+        <div>
+          <button class="add-btn carousel-button" data-id="${escapeHtml(s.id)}" data-first="${escapeHtml(s.firstName)}" data-last="${escapeHtml(s.lastName)}" data-grade="${escapeHtml(s.grade)}" data-row="${escapeHtml(s.rowNumber)}">Add</button>
+        </div>
+      </div>
+    `;
+  }
+
+  async function loadRoster() {
+    rosterEl.innerHTML = '<div style="padding:8px;color:#aaa">Loading roster...</div>';
+    const r = await apiGet('getClassroom', { teacher: classroomName });
+    if (!r || !r.students || r.students.length === 0) {
+      rosterEl.innerHTML = '<div style="padding:8px;color:#aaa">You have no students assigned yet.</div>';
+      return;
+    }
+    rosterEl.innerHTML = r.students.map(s => `
+      <div style="padding:8px;border-bottom:1px solid rgba(0,191,255,0.04);">
+        <strong>${escapeHtml(s.firstName)} ${escapeHtml(s.lastName)}</strong>
+        <div style="color:#9aa">Grade ${escapeHtml(s.grade)} • Assigned: ${escapeHtml(s.assignedAt || '')}</div>
+      </div>
+    `).join('');
+  }
+
+  async function loadQueue() {
+    queueEl.innerHTML = '<div style="padding:8px;color:#aaa">Loading queue...</div>';
+    const r = await apiGet('getQueue', { teacher: classroomName });
+    if (!r || !r.queue || r.queue.length === 0) {
+      queueEl.innerHTML = '<div style="padding:8px;color:#aaa">No queued requests.</div>';
+      return;
+    }
+    queueEl.innerHTML = r.queue.map(q => `
+      <div style="padding:8px;border-bottom:1px solid rgba(0,191,255,0.04);">
+        <strong>${escapeHtml(q.firstName)} ${escapeHtml(q.lastName)}</strong>
+        <div style="color:#9aa">Grade ${escapeHtml(q.grade)} • Requested at: ${escapeHtml(q.requestedAt)}</div>
+      </div>
+    `).join('');
+  }
+
+  // small helpers
+  function debounce(fn, ms) {
+    let t;
+    return function() {
+      clearTimeout(t);
+      const args = arguments;
+      t = setTimeout(() => fn.apply(this, args), ms);
+    };
+  }
+  function escapeHtml(s) {
+    return (s||'').toString().replaceAll('&','&amp;').replaceAll('<','&lt;').replaceAll('>','&gt;').replaceAll('"','&quot;');
+  }
+
+  init();
+</script>
+</body>
+</html>
