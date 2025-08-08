@@ -4,26 +4,13 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Login with Google - BVSD Classroom Scheduler</title>
+  <link rel="stylesheet" href="style.css" />
   <script src="https://accounts.google.com/gsi/client" async defer></script>
-  <style>
-    body {
-      font-family: Arial, sans-serif;
-      background: #f8f8f8;
-      height: 100vh;
-      margin: 0;
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-      align-items: center;
-    }
-    #error-message {
-      color: red;
-      margin-top: 15px;
-      font-weight: bold;
-    }
-  </style>
 </head>
-<body>
+<body class="section-padded centered-content">
+
+  <h2 class="section-title">Log In with Google</h2>
+  <p class="login-description">You must be a BVSD student or staff member to use this service.</p>
 
   <div id="g_id_onload"
        data-client_id="80332255767-uvdvsap22ecuivgt0av54fhnirdq632c.apps.googleusercontent.com"
@@ -40,14 +27,14 @@
        data-logo_alignment="left">
   </div>
 
-  <div id="error-message"></div>
+  <div id="error-message" style="color: #ff5555; margin-top: 20px; font-weight: 700; font-size: 1.1rem;"></div>
 
   <script>
     function handleCredentialResponse(response) {
       const data = parseJwt(response.credential);
       const email = data.email;
 
-      if(email && email.toLowerCase().endsWith("@gmail.com")) {
+      if(email && email.toLowerCase().endsWith("@bvsd.org")) {
         sessionStorage.setItem('userName', data.name);
         window.location.href = "dashboard.html";
       } else {
