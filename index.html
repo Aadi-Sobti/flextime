@@ -20,6 +20,9 @@
         <a href="https://www.bvsd.org" target="_blank" class="logo-link">
             <img src="images/logo.png" alt="BVSD Logo" class="logo">
         </a>
+        <div class="nav-buttons">
+            <a href="about.html" class="nav-button">About</a>
+        </div>
     </nav>
 
     <section class="slider">
@@ -61,7 +64,6 @@
     </footer>
 
     <script>
-        // Splash screen functionality
         window.addEventListener('load', () => {
             const splash = document.getElementById('splash-screen');
             setTimeout(() => {
@@ -69,7 +71,6 @@
             }, 1000);
         });
 
-        // Carousel functionality
         let slideIndex = 0;
         const slides = document.querySelectorAll('.slide');
         const totalSlides = slides.length;
@@ -83,10 +84,8 @@
         slides[slideIndex].classList.add('active');
         setInterval(showSlides, 5000);
 
-        // Google Sign-in button logic (placeholder)
         document.getElementById('login-button').addEventListener('click', () => {
             alert("Google Sign-In would go here.");
-            // Redirect or trigger Google Apps Script sign-in
         });
     </script>
 
