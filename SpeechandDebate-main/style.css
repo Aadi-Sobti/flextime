@@ -1,0 +1,569 @@
+/* General */
+body {
+    margin: 0;
+    font-family: 'Segoe UI', sans-serif;
+    background-color: #0d0d0d;
+    color: #f0f0f0;
+    scroll-behavior: smooth; /* Ensure smooth scrolling for anchors */
+    overflow-x: hidden; /* Prevent horizontal scroll due to vw */
+}
+
+/* Utility Classes for Sleekness and Centering */
+.section-padded {
+    padding: 80px 20px; /* More vertical padding for sections */
+}
+
+.centered-content {
+    display: flex;
+    flex-direction: column;
+    align-items: center; /* Center items horizontally */
+    text-align: center; /* Center text within items */
+}
+
+.section-title {
+    color: #00bfff;
+    font-size: 3rem; /* Larger, more impactful titles */
+    margin-bottom: 40px; /* More space below titles */
+    text-align: center;
+}
+
+/* --- Splash Screen --- */
+#splash-screen {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: linear-gradient(to bottom right, #000814, #001d3d);
+    z-index: 10000;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    /* Quicker fade out */
+    transition: opacity 0.5s ease-out, visibility 0.5s ease-out;
+}
+
+#splash-screen.hide {
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+}
+
+.splash-content {
+    text-align: center;
+    padding: 20px;
+    /* Zoom in/out animation */
+    animation: zoomInOut 0.8s ease-out; /* Adjusted animation duration */
+}
+
+@keyframes zoomInOut {
+    0% {
+        transform: scale(0.8); /* Starts slightly smaller */
+        opacity: 0;
+    }
+    50% {
+        transform: scale(1.05); /* Zooms slightly larger than original */
+        opacity: 1;
+    }
+    100% {
+        transform: scale(1); /* Returns to original size */
+    }
+}
+
+
+.splash-logo {
+    width: 280px; /* Larger mascot */
+    max-width: 90vw;
+    margin-bottom: 40px; /* Increased margin */
+}
+
+.splash-title {
+    font-size: 4rem; /* Even larger title */
+    color: #00bfff;
+    text-shadow: 2px 2px 10px rgba(0, 0, 0, 0.7);
+    font-weight: 700;
+}
+
+/* --- Navbar --- */
+nav {
+    background: transparent; /* Make navbar transparent */
+    display: flex;
+    justify-content: flex-start; /* Logo stays left */
+    align-items: center;
+    padding: 15px 30px;
+    position: fixed; /* Fixed position over content */
+    top: 0;
+    left: 0;
+    width: 100vw;
+    z-index: 500;
+    box-sizing: border-box;
+}
+
+nav .logo-link {
+    display: block;
+}
+
+nav .logo {
+    height: 60px; /* Larger logo */
+    /* Added white shadow for visibility */
+    filter: drop-shadow(0 0 8px rgba(255, 255, 255, 0.7));
+}
+
+/* --- Carousel --- */
+.slider {
+    position: relative;
+    width: 100vw;
+    height: 100vh;
+    overflow: hidden;
+    /* Add for parallax */
+    background-attachment: fixed; /* Essential for parallax background behavior */
+    background-position: center; /* Center the background image */
+    background-repeat: no-repeat; /* Do not repeat the background image */
+    background-size: cover; /* Cover the entire element */
+    transition: background-position 0.1s linear; /* Smooth transition for the effect */
+}
+
+/* Main title over carousel images */
+.main-carousel-title {
+    position: absolute;
+    top: 15vh; /* Position slightly down from the top */
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 520; /* Above buttons and slides */
+    color: #fff;
+    font-size: 5vw; /* Responsive font size */
+    font-weight: bold;
+    text-align: center;
+    width: 90%; /* Ensure it spans across */
+    text-shadow: 3px 3px 10px rgba(0, 0, 0, 0.9), 0 0 15px rgba(0, 191, 255, 0.5); /* Stronger shadows for visibility */
+    pointer-events: none; /* Allows clicks on elements underneath */
+}
+
+
+.slides {
+    display: flex;
+    width: 100%;
+    height: 100%;
+}
+
+.slide {
+    flex: 0 0 100%;
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    opacity: 0;
+    transition: opacity 1s ease-in-out;
+    display: flex;
+    justify-content: center;
+    align-items: flex-end; /* Align caption to the bottom */
+}
+
+.slide.active {
+    opacity: 1;
+}
+
+.slide img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover; /* Ensures image fills the area without distorting */
+    filter: brightness(60%);
+    /* Add this for a subtle parallax on the image itself */
+    transform: translateY(0); /* Initial state */
+    transition: transform 0.1s linear; /* Smooth transition for the effect */
+}
+
+.caption {
+    position: absolute;
+    bottom: 5vh;
+    color: #fff;
+    font-size: 4vw; /* Larger and responsive font size */
+    font-weight: bold;
+    text-shadow: 2px 2px 8px rgba(0, 0, 0, 0.9);
+    text-align: center;
+    width: 80%; /* Constrain caption width for better readability */
+    padding: 0 10vw; /* Add horizontal padding to center within width */
+    box-sizing: border-box;
+    /* Ensure caption is not cut off by top */
+    top: auto; /* Reset top property */
+    bottom: 5vh; /* Explicitly set bottom positioning */
+}
+
+/* Carousel Buttons (About and Information) */
+.carousel-buttons {
+    position: absolute;
+    top: 50%; /* Vertically center */
+    left: 50%; /* Horizontally center */
+    transform: translate(-50%, -50%); /* Base transform for centering the container */
+    display: flex;
+    gap: 30px; /* Space between buttons */
+    z-index: 510; /* Above slides, below fixed navbar */
+    /* No need for justify-content: center here, as transform handles centering */
+}
+
+.carousel-button {
+    color: #fff; /* White text for contrast */
+    background-color: rgba(0, 77, 122, 0.8); /* Semi-transparent blue */
+    backdrop-filter: blur(5px); /* Frosted glass effect */
+    padding: 20px 40px; /* Larger buttons */
+    text-decoration: none;
+    font-weight: bold;
+    font-size: 1.5rem; /* Larger font size */
+    border-radius: 10px; /* More rounded corners */
+    transition: background-color 0.3s ease, box-shadow 0.3s ease, border 0.3s ease, transform 0.3s ease; /* Explicitly list properties */
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+    /* Individual buttons within the flex container no longer need translate(-50%, -50%) */
+    /* Their position is relative to their flex container, which is already centered */
+}
+
+.carousel-button:hover {
+    background-color: rgba(0, 102, 163, 0.9);
+    transform: scale(1.05); /* Only scale on hover, no unintended movement */
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.5), 0 0 20px rgba(0, 191, 255, 0.7); /* Added glow */
+    border: 2px solid #00bfff; /* Subtle border on hover */
+}
+
+
+/* --- Information Section --- */
+#information {
+    background: #111;
+}
+
+/* Base styling for the links and updates sections, ensuring they take up max width */
+#information #links,
+#information #updates {
+    max-width: 900px; /* Constrain width for better readability */
+    margin: 0 auto; /* Center the content blocks */
+    padding: 20px; /* Add some padding */
+    /* Removed text-align: center; to allow left alignment for update/link details */
+}
+
+/* Styling for individual link items */
+.info-link-item {
+    margin-bottom: 15px; /* Space between each link */
+    text-align: left; /* Align link text to the left */
+}
+
+.info-link-item a {
+    text-decoration: none; /* Remove underline from link */
+    color: #00bfff; /* Link color */
+    font-size: 1.5rem; /* Bigger font size for links */
+    display: block; /* Make the whole area clickable */
+    padding: 8px 0; /* Vertical padding around link text */
+    transition: color 0.3s ease;
+}
+
+.info-link-item a:hover {
+    color: #0080ff; /* Slightly darker blue on hover */
+}
+
+/* Line separator for links */
+.link-separator {
+    border: none;
+    border-top: 1px dashed rgba(255, 255, 255, 0.3); /* Dashed line for separation */
+    margin: 15px 0; /* Space above and below line */
+    width: 100%; /* Make the line span full width */
+}
+
+
+/* Styling for individual update items */
+.update-item {
+    background-color: #1a1a1a; /* Dark background for the box */
+    border: 2px solid transparent; /* Initial transparent border */
+    border-radius: 8px;
+    padding: 20px;
+    margin-bottom: 30px; /* Space between update boxes */
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+    transition: all 0.3s ease-in-out; /* Smooth transition for hover effects */
+    text-align: left; /* Align update text to the left within its box */
+    font-size: 1.15rem; /* Larger text for updates */
+    line-height: 1.6;
+}
+
+.update-item:hover {
+    border: 2px solid #00bfff; /* Blue border on hover */
+    box-shadow: 0 6px 20px rgba(0, 191, 255, 0.4); /* Enhanced shadow on hover */
+    transform: translateY(-5px); /* Slight lift on hover */
+}
+
+.update-item strong {
+    color: #00bfff; /* Color for the name/heading */
+    font-size: 1.3rem; /* Make the name slightly larger */
+}
+
+.update-item em {
+    color: #ccc; /* Slightly lighter color for date/time */
+    font-size: 1rem; /* Date/time slightly smaller than name */
+}
+
+.update-item p {
+    margin-top: 10px;
+    margin-bottom: 0;
+    color: #f0f0f0;
+}
+
+/* Line separator for updates */
+.update-separator {
+    border: none;
+    border-top: 1px solid rgba(255, 255, 255, 0.1); /* Thin, subtle line */
+    margin: 20px 0 0; /* Margin above the line, none below */
+}
+
+
+/* --- About Page Specific Styles --- */
+.about-section {
+    background: #0d0d0d;
+}
+
+.about-content {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: flex-start; /* Align items to the top for better text flow */
+    gap: 70px; /* More space between image collage and text */
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 20px; /* Horizontal padding for content */
+}
+
+.image-collage {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 20px; /* More space between images */
+    flex: 1;
+    max-width: 45%; /* Control width on larger screens */
+    padding-top: 20px; /* Push images down a bit */
+}
+
+.image-collage img {
+    width: 100%;
+    height: 250px; /* Fixed height for consistency in collage */
+    border-radius: 12px; /* More rounded corners */
+    object-fit: cover; /* Ensures image covers the area without distorting */
+    box-shadow: 0 6px 20px rgba(0, 191, 255, 0.3);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.image-collage img:hover {
+    transform: scale(1.05); /* Slightly more pronounced hover */
+    box-shadow: 0 8px 25px rgba(0, 191, 255, 0.5);
+}
+
+.about-text {
+    flex: 1;
+    max-width: 55%; /* Allow text to take up more space */
+    line-height: 1.9; /* Increased line height for readability */
+    font-size: 1.25rem; /* Larger font size */
+    text-align: center; /* Center the text */
+}
+
+.about-text p {
+    margin-bottom: 20px; /* More space between paragraphs */
+}
+
+/* About Page Navbar specific back button */
+.nav-buttons {
+    margin-left: auto; /* Push back button to the right */
+    display: flex; /* For alignment */
+}
+
+.nav-button {
+    color: #00bfff;
+    background-color: #004d7a;
+    padding: 12px 25px; /* Slightly smaller than carousel buttons */
+    text-decoration: none;
+    font-weight: bold;
+    font-size: 1.1rem;
+    border-radius: 8px;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-right: 30px; /* Space from the right edge */
+}
+
+.nav-button:hover {
+    background-color: #0066a3;
+    transform: translateY(-2px);
+}
+
+/* --- Contact Us Section (Footer) --- */
+.contact-us {
+    background: #1a1a1a;
+    padding: 40px 20px; /* More padding */
+    text-align: center;
+    border-top: 2px solid #001d3d;
+}
+
+.contact-links {
+    display: flex;
+    justify-content: center;
+    gap: 40px; /* More space between icons */
+    margin-top: 25px;
+}
+
+.contact-links a {
+    color: #f0f0f0;
+    font-size: 3rem; /* Larger icons */
+    transition: color 0.3s ease, transform 0.2s ease;
+}
+
+.contact-links a:hover {
+    color: #00bfff;
+    transform: translateY(-5px); /* More pronounced lift on hover */
+}
+
+/* --- Responsive Design --- */
+@media (max-width: 1024px) {
+    .splash-title {
+        font-size: 3.5rem;
+    }
+    .main-carousel-title {
+        font-size: 4.5vw;
+    }
+    .caption {
+        font-size: 5vw;
+    }
+    .carousel-button {
+        padding: 15px 30px;
+        font-size: 1.3rem;
+    }
+    .about-content {
+        gap: 40px;
+    }
+    .image-collage {
+        max-width: 48%;
+    }
+    .about-text {
+        max-width: 52%;
+        font-size: 1.1rem;
+    }
+}
+
+@media (max-width: 768px) {
+    .splash-title {
+        font-size: 2.8rem;
+    }
+    .splash-logo {
+        width: 200px;
+    }
+    nav {
+        justify-content: center; /* Center logo on smaller screens */
+    }
+    nav .logo-link {
+        margin: 0 auto;
+    }
+    .main-carousel-title {
+        font-size: 7vw; /* Adjust for smaller screens */
+        top: 10vh; /* Adjust position */
+    }
+    .carousel-buttons {
+        flex-direction: column;
+        gap: 20px;
+        top: 60%; /* Adjust position to avoid overlapping caption as much */
+        /* For mobile, flex-direction column makes the transform: translate(-50%, -50%) problematic.
+           We apply translate(-50%, 0) to ensure horizontal centering and let default flow handle vertical. */
+        transform: translate(-50%, 0); /* Center horizontally when stacked */
+        width: auto; /* Let content define width in column layout */
+    }
+    .carousel-button {
+        width: 80vw; /* Make buttons wider on mobile */
+        max-width: 300px;
+        padding: 15px 20px;
+        font-size: 1.1rem;
+        text-align: center;
+        /* Remove individual button transforms here because parent handles positioning for column layout */
+        transform: none;
+    }
+    .carousel-button:hover {
+        transform: scale(1.05); /* Only scale on hover */
+    }
+
+    .caption {
+        font-size: 6.5vw;
+        bottom: 8vh; /* Move caption up slightly */
+    }
+
+    .section-title {
+        font-size: 2.5rem;
+    }
+
+    .about-content {
+        flex-direction: column;
+        align-items: center;
+        gap: 30px;
+    }
+    .image-collage,
+    .about-text {
+        max-width: 90%;
+    }
+    .image-collage img {
+        height: 200px; /* Adjust height for mobile collage */
+    }
+    .about-text {
+        font-size: 1rem;
+    }
+    .nav-button {
+        padding: 10px 20px;
+        font-size: 1rem;
+    }
+
+    /* Adjustments for links/updates on mobile */
+    .info-link-item a {
+        font-size: 1.3rem;
+    }
+    .update-item {
+        font-size: 1rem;
+        padding: 15px;
+    }
+    .update-item strong {
+        font-size: 1.2rem;
+    }
+    .update-item em {
+        font-size: 0.9rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .splash-title {
+        font-size: 2.2rem;
+    }
+    .splash-logo {
+        width: 150px;
+    }
+    .main-carousel-title {
+        font-size: 8vw;
+        top: 8vh;
+    }
+    .carousel-button {
+        font-size: 1rem;
+        padding: 12px 15px;
+    }
+    .caption {
+        font-size: 8vw;
+        bottom: 10vh;
+    }
+    .section-title {
+        font-size: 2rem;
+    }
+    .contact-links a {
+        font-size: 2.5rem;
+    }
+
+    /* Further adjustments for links/updates on very small screens */
+    .info-link-item a {
+        font-size: 1.1rem;
+    }
+    .update-item {
+        font-size: 0.95rem;
+        padding: 12px;
+    }
+    .update-item strong {
+        font-size: 1.1rem;
+    }
+    .update-item em {
+        font-size: 0.85rem;
+    }
+}
