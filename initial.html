@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Initial Roster — BVSD Scheduler</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body class="section-padded centered-content">
+
+  <h1 class="section-title">Initial Roster (Homeroom)</h1>
+  <div style="max-width:900px; width:100%;">
+    <p>Search students and add them to your initial roster (these students are your homeroom and are stored only in your classroom sheet).</p>
+
+    <div style="margin: 16px 0;">
+      <input id="search-input" placeholder="Search students (type 2+ characters)" style="width:100%; padding:10px; border-radius:8px; border:1px solid #00bfff;">
+    </div>
+
+    <div id="results" style="background:#0b0b0b; padding:10px; border-radius:8px; max-height:420px; overflow:auto;"></div>
+
+    <div style="margin-top:18px; text-align:center;">
+      <a href="teacher.html" class="carousel-button">Back to Dashboard</a>
+    </div>
+
+    <div id="status" style="margin-top:12px; color:#ccc;"></div>
+  </div>
+
+<script>
+  const WEB_APP_URL = 'REPLACE_WITH_YOUR_WEB_APP_URL';
+  const userName = sessionStorage.getItem('userName') || '';
+  if (!userName) location.href = 'login.html';
+
+  async function api(action, params={}) {
+    params.action = action;
+    return fetch(`${WEB_APP_URL}?${new URLSearchParams(params).toString()}`).then(r => r.json());
+  }
+
+  const searchInput = document.getElementById('search-input');
+  const results = document.getElementById('results');
+  const status = document.getElementById('status');
+
+  searchInput.addEventListener('input', debounce(async (e) => {
+    const q = e.target.value.trim();
+    if (q.length < 2) { results.innerHTML = '<div style="padding:8px;color:#aaa">Type 2+ chars to search.</div>'; return; }
+    results.innerHTML = '<div style="padding:8px;color:#aaa">Searching...</div>';
+    const r = await api('searchStudents', { query: q });
+    if (!r || !r.students || r.students.length === 0) { results.innerHTML = '<div style="padding:8px;color:#aaa">No students found.</div>'; return; }
+    results.innerHTML = r.students.map(s => `
+      <div style="display:flex;justify-content:space-between;align-items:center;padding:8px;border-bottom:1px solid rgba(255,255,255,0.03);">
+        <div>
+          <strong>${escapeHtml(s.firstName)} ${escapeHtml(s.lastName)}</strong><br><small style="color:#9aa">Grade ${escapeHtml(s.grade)}</small>
+        </div>
+        <div>
+          <button class="add-initial carousel-button" data-id="${escapeHtml(s.id)}" data-first="${escapeHtml(s.firstName)}" data-last="${escapeHtml(s.lastName)}" data-grade="${escapeHtml(s.grade)}">Add to Initial</button>
+        </div>
+      </div>
+    `).join('');
+  }, 300));
+
+  results.addEventListener('click', async (ev) => {
+    const btn = ev.target.closest('.add-initial');
+    if (!btn) return;
+    btn.disabled = true; btn.textContent = 'Adding...';
+    const studentId = btn.dataset.id;
+    const firstName = btn.dataset.first;
+    const lastName = btn.dataset.last;
+    const grade = btn.dataset.grade;
+    const res = await api('saveInitialStudent', { teacherName: userName, studentId, firstName, lastName, grade });
+    status.textContent = res.message || 'Done';
+    await refresh();
+    btn.disabled = false; btn.textContent = 'Add to Initial';
+  });
+
+  async function refresh() {
+    // short visual pause
+    await new Promise(r => setTimeout(r, 250));
+  }
+
+  function debounce(fn, ms) { let t; return function() { clearTimeout(t); const args = arguments; t = setTimeout(() => fn.apply(this, args), ms); }; }
+  function escapeHtml(s) { return (s||'').toString().replaceAll('&','&amp;').replaceAll('<','&lt;').replaceAll('>','&gt;').replaceAll('"','&quot;'); }
+</script>
+
+</body>
+</html>
