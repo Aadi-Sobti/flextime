@@ -1,7 +1,5 @@
 <!-- teacher.html -->
 
-
-<!-- teacher.html — updated transfer UI -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -13,297 +11,226 @@
 <body class="section-padded centered-content">
 
   <h1 class="section-title">Teacher Dashboard</h1>
-  <div id="sub" style="max-width: 1100px; width: 100%;">
+  <div style="max-width:1100px; width:100%;">
+    <div id="welcome" style="text-align:center; margin-bottom:8px;"></div>
 
-    <div id="welcome" style="margin-bottom: 12px; text-align:center;"></div>
-
-    <section id="classroom-info" style="margin-bottom: 12px;">
+    <section>
       <h2>Your Classroom: <span id="classroom-name" style="color:#00bfff;"></span></h2>
-      <div id="classroom-controls">
-        <button id="create-classroom" class="carousel-button" style="display:none; margin-top: 12px;">Create Classroom</button>
-        <div id="classroom-status" style="margin-top:12px;"></div>
-        <label style="display:inline-block; margin-left:16px;">
-          <input type="checkbox" id="initial-mode"> Initial roster mode
-        </label>
-      </div>
+      <div id="classroom-status"></div>
+      <button id="create-classroom" class="carousel-button" style="display:none; margin-top:8px;">Create Classroom</button>
     </section>
 
-    <section id="transfers" style="margin-bottom: 20px;">
+    <section style="margin-top:18px;">
       <h2 class="section-title">Transfers</h2>
-      <div style="display:flex; gap:20px; justify-content:center; flex-wrap:wrap;">
+      <div style="display:flex; gap:20px; flex-wrap:wrap;">
         <div style="flex:1; min-width:320px;">
-          <h3 style="color:#00bfff;">Check Out — Leaving your classroom</h3>
-          <div id="checkout-list" style="min-height:120px; background:#0b0b0b; border:1px solid rgba(0,191,255,0.06); padding:10px; border-radius:8px;"></div>
+          <h3 style="color:#00bfff;">Check Out — Students leaving your homeroom</h3>
+          <div id="checkout-list" style="background:#0b0b0b; padding:10px; border-radius:8px; min-height:120px;"></div>
         </div>
         <div style="flex:1; min-width:320px;">
-          <h3 style="color:#00bfff;">Check In — Coming into your classroom</h3>
-          <div id="checkin-list" style="min-height:120px; background:#0b0b0b; border:1px solid rgba(0,191,255,0.06); padding:10px; border-radius:8px;"></div>
+          <h3 style="color:#00bfff;">Check In — Incoming students</h3>
+          <div id="incoming-pending" style="background:#0b0b0b; padding:8px; border-radius:8px; min-height:80px; margin-bottom:8px;">
+            <strong style="color:#9aa">Waiting for home teacher to check out</strong>
+            <div id="incoming-pending-list"></div>
+          </div>
+          <div id="incoming-ready" style="background:#0b0b0b; padding:8px; border-radius:8px; min-height:80px;">
+            <strong style="color:#9aa">Ready to Check In</strong>
+            <div id="incoming-ready-list"></div>
+          </div>
         </div>
       </div>
     </section>
 
-    <section id="search" style="margin-bottom: 20px;">
-      <h2 class="section-title">Search Students</h2>
-      <input id="search-input" type="text" placeholder="Search by first, last, grade..." style="width:100%; padding:12px; border-radius:8px; border:1px solid #00bfff; font-size:1rem;">
-      <div id="search-results" style="margin-top:12px; max-height:320px; overflow:auto; background:#0b0b0b; border:1px solid rgba(0,191,255,0.08); padding:8px; border-radius:8px;"></div>
+    <section style="margin-top:18px;">
+      <h2 class="section-title">Search & Add Students</h2>
+      <input id="search-input" placeholder="Search by first, last, grade..." style="width:100%; padding:10px; border-radius:8px; border:1px solid #00bfff;">
+      <div id="search-results" style="margin-top:10px; background:#0b0b0b; padding:8px; border-radius:8px; max-height:320px; overflow:auto;"></div>
     </section>
 
-    <section id="roster" style="margin-bottom: 20px;">
-      <h2 class="section-title">Your Roster</h2>
-      <div id="roster-list" style="max-height:300px; overflow:auto; background:#0b0b0b; border:1px solid rgba(0,191,255,0.08); padding:8px; border-radius:8px;"></div>
+    <section style="margin-top:18px;">
+      <h2 class="section-title">Roster</h2>
+      <div id="roster-list" style="background:#0b0b0b; padding:8px; border-radius:8px; max-height:300px; overflow:auto;"></div>
     </section>
 
-    <section id="queue" style="margin-bottom: 20px;">
-      <h2 class="section-title">Your Queue (All requests involving you)</h2>
-      <div id="queue-list" style="max-height:220px; overflow:auto; background:#0b0b0b; border:1px solid rgba(0,191,255,0.08); padding:8px; border-radius:8px;"></div>
+    <section style="margin-top:18px;">
+      <h2 class="section-title">Requests involving you</h2>
+      <div id="queue-list" style="background:#0b0b0b; padding:8px; border-radius:8px; max-height:200px; overflow:auto;"></div>
     </section>
 
-    <section id="tutor" style="margin-bottom: 20px;">
-      <h2 class="section-title">Request a Tutor</h2>
-      <div style="max-width:700px; margin:auto; text-align:left;">
-        <label>Grade (optional)</label>
-        <input id="tutor-grade" placeholder="e.g. 10" style="width:100%; padding:8px; border-radius:6px; margin-bottom:8px;">
-        <label>Requirements (e.g. Completed Algebra 1)</label>
-        <input id="tutor-reqs" placeholder="Requirements" style="width:100%; padding:8px; border-radius:6px; margin-bottom:8px;">
-        <label>Description</label>
-        <textarea id="tutor-desc" placeholder="Describe the tutoring need" style="width:100%; padding:8px; border-radius:6px; margin-bottom:8px;" rows="3"></textarea>
-        <button id="tutor-request-btn" class="carousel-button" style="display:block;">Request Tutor</button>
-        <div id="tutor-status" style="margin-top:8px;"></div>
-      </div>
-    </section>
-
+    <div style="text-align:center; margin-top:12px;">
+      <a href="initial.html" class="carousel-button">Edit Initial Roster</a>
+    </div>
   </div>
 
 <script>
   // CONFIG: set this to your Apps Script web app exec URL
-  const WEB_APP_URL = 'https://script.google.com/macros/s/AKfycbzpiD3NV_yw5aIYkbqI1ubZJSNZmnJNufY6XcngSB6jha1bd18_Qreo4vwgyzrSJkWLAw/exec';
+  const WEB_APP_URL = 'https://script.google.com/macros/s/AKfycbyUAtjM4mJ1XIC6HSV3KqprOIwqyiuMuPIHN5EEzHpi8lT-s4oK7j8YIu9fqLsMEs_t_Q/exec';
 
-  async function apiGet(action, params = {}) {
+  function api(action, params = {}) {
     params.action = action;
     const q = new URLSearchParams(params).toString();
-    const res = await fetch(`${WEB_APP_URL}?${q}`);
-    return res.json();
+    return fetch(`${WEB_APP_URL}?${q}`).then(r => r.json());
   }
 
   const userName = sessionStorage.getItem('userName') || '';
-  if (!userName) { window.location.href = 'login.html'; }
-  const classroomName = userName;
+  if (!userName) location.href = 'login.html';
+  document.getElementById('welcome').innerHTML = `<p>Welcome, <strong>${escapeHtml(userName)}</strong></p>`;
+  document.getElementById('classroom-name').textContent = userName;
 
-  const classroomNameEl = document.getElementById('classroom-name');
-  const welcomeEl = document.getElementById('welcome');
   const createBtn = document.getElementById('create-classroom');
   const statusEl = document.getElementById('classroom-status');
+  const checkoutList = document.getElementById('checkout-list');
+  const incomingPendingList = document.getElementById('incoming-pending-list');
+  const incomingReadyList = document.getElementById('incoming-ready-list');
   const searchInput = document.getElementById('search-input');
-  const resultsEl = document.getElementById('search-results');
-  const rosterEl = document.getElementById('roster-list');
-  const queueEl = document.getElementById('queue-list');
-  const checkoutEl = document.getElementById('checkout-list');
-  const checkinEl = document.getElementById('checkin-list');
-
-  welcomeEl.innerHTML = `<p style="font-size:1.05rem;">Welcome, <strong>${escapeHtml(userName)}</strong></p>`;
-  classroomNameEl.textContent = classroomName;
+  const searchResults = document.getElementById('search-results');
+  const rosterList = document.getElementById('roster-list');
+  const queueList = document.getElementById('queue-list');
 
   async function init() {
     statusEl.textContent = 'Checking classroom...';
-    const check = await apiGet('checkClassroom', { classroom: classroomName });
-    if (check && check.exists) { statusEl.textContent = 'Classroom loaded.'; createBtn.style.display = 'none'; } else { statusEl.textContent = 'You do not have a classroom yet.'; createBtn.style.display = 'inline-block'; }
+    const chk = await api('checkClassroom', { classroom: userName });
+    if (chk.exists) { statusEl.textContent = 'Classroom loaded'; createBtn.style.display = 'none'; } else { statusEl.textContent = 'No classroom yet'; createBtn.style.display = 'inline-block'; }
 
     createBtn.addEventListener('click', async () => {
-      createBtn.disabled = true; statusEl.textContent = 'Creating classroom...';
-      const res = await apiGet('createClassroom', { classroom: classroomName });
-      if (res && res.success) { statusEl.textContent = 'Classroom created.'; createBtn.style.display = 'none'; await refreshAll(); } else { statusEl.textContent = res.message || 'Failed'; createBtn.disabled = false; }
+      createBtn.disabled = true;
+      const res = await api('createClassroom', { classroom: userName });
+      createBtn.disabled = false;
+      if (res.success) location.href = 'initial.html';
+      else alert(res.message || 'Failed to create classroom');
     });
 
     searchInput.addEventListener('input', debounce(async e => {
       const q = e.target.value.trim();
-      if (q.length < 2) { resultsEl.innerHTML = '<div style="padding:8px;color:#aaa">Type 2+ chars to search.</div>'; return; }
-      resultsEl.innerHTML = '<div style="padding:8px;color:#aaa">Searching...</div>';
-      const r = await apiGet('searchStudents', { query: q });
-      if (!r || !r.students || r.students.length === 0) { resultsEl.innerHTML = '<div style="padding:8px;color:#aaa">No students found.</div>'; return; }
-      resultsEl.innerHTML = r.students.map(s => studentRowHtml(s)).join('');
+      if (q.length < 2) { searchResults.innerHTML = '<div style="padding:8px;color:#aaa">Type 2+ chars</div>'; return; }
+      searchResults.innerHTML = '<div style="padding:8px;color:#aaa">Searching...</div>';
+      const r = await api('searchStudents', { query: q });
+      if (!r || !r.students || r.students.length === 0) { searchResults.innerHTML = '<div style="padding:8px;color:#aaa">No results</div>'; return; }
+      searchResults.innerHTML = r.students.map(s => studentRowHtml(s)).join('');
     }, 300));
 
-    resultsEl.addEventListener('click', async ev => {
-      const addBtn = ev.target.closest('.add-btn');
-      const addInitialBtn = ev.target.closest('.add-initial-btn');
-      if (addBtn) {
-        const row = addBtn.closest('.student-row');
-        const studentId = row.dataset.id;
-        const firstName = row.dataset.first;
-        const lastName = row.dataset.last;
-        const grade = row.dataset.grade;
-        const rowNumber = row.dataset.row;
-        const times = row.querySelector('.times-select').value;
-        const priority = row.querySelector('.priority-select').value;
-        addBtn.disabled = true; addBtn.textContent = 'Requesting...';
-        const res = await apiGet('addStudentRequest', { studentId, firstName, lastName, grade, teacherName: classroomName, rowNumber, times, priority, isInitial: 'false' });
-        await refreshAll();
-        if (res.assigned) alert('Student assigned to your classroom.');
-        else if (res.queued) alert('Request created; home teacher must check out the student.');
-        else if (res.reassignedFrom) alert('Student reassigned from ' + res.reassignedFrom);
-        else alert('Error: ' + (res.message || 'unknown'));
-        addBtn.disabled = false; addBtn.textContent = 'Request';
-      } else if (addInitialBtn) {
-        const row = addInitialBtn.closest('.student-row');
-        const studentId = row.dataset.id;
-        const firstName = row.dataset.first;
-        const lastName = row.dataset.last;
-        const grade = row.dataset.grade;
-        const rowNumber = row.dataset.row;
-        const times = row.querySelector('.times-select').value;
-        const priority = row.querySelector('.priority-select').value;
-        addInitialBtn.disabled = true; addInitialBtn.textContent = 'Adding...';
-        const res = await apiGet('addStudentRequest', { studentId, firstName, lastName, grade, teacherName: classroomName, rowNumber, times, priority, isInitial: 'true' });
-        await refreshAll();
-        addInitialBtn.disabled = false; addInitialBtn.textContent = 'Add as Initial';
-        if (res.assigned) alert('Added to classroom initial roster.');
-        else if (res.queued) alert('Added to queue (pending).');
-      }
-    });
-
-    // check out (home teacher) & checkin (incoming request wait list)
-    checkoutEl.addEventListener('click', async ev => {
-      const btn = ev.target.closest('.checkout-btn');
+    searchResults.addEventListener('click', async ev => {
+      const btn = ev.target.closest('.request-btn');
       if (!btn) return;
-      const requestRow = btn.dataset.row;
-      btn.disabled = true; btn.textContent = 'Checking out...';
-      const res = await apiGet('checkoutStudent', { requestRow, teacherName: classroomName });
+      const id = btn.dataset.id, first = btn.dataset.first, last = btn.dataset.last, grade = btn.dataset.grade;
+      const parent = btn.closest('.student-row');
+      const timesSel = parent.querySelector('.times');
+      const priSel = parent.querySelector('.priority');
+      const times = timesSel ? timesSel.value : '1';
+      const priority = priSel ? priSel.value : 'not important';
+      btn.disabled = true; btn.textContent = 'Adding...';
+      const res = await api('addStudentRequest', { teacherName: userName, studentId: id, firstName: first, lastName: last, grade, times, priority });
+      // close / remove the student row after adding (per your request)
+      parent.remove();
       await refreshAll();
-      btn.disabled = false; btn.textContent = 'Check Out';
-      if (!res.success) alert('Error: ' + (res.message||'unknown')); else alert('Checked out: ' + (res.toTeacher || 'assigned'));
+      if (res.assigned) alert('Assigned to you (will appear in roster; checkedOut = FALSE until home teacher releases if homeroom).');
+      else if (res.queued) alert('Student is assigned to someone else — request queued for home teacher to check out.');
+      else alert(res.message || 'Done');
     });
 
-    // roster checkin/out buttons
-    rosterEl.addEventListener('click', async ev => {
-      const outBtn = ev.target.closest('.checkout-btn-roster');
+    document.body.addEventListener('click', async ev => {
+      const cbtn = ev.target.closest('.checkout-btn');
+      if (cbtn) {
+        const row = cbtn.dataset.row;
+        cbtn.disabled = true; cbtn.textContent = 'Checking out...';
+        const res = await api('checkoutRequest', { requestRow: row, teacherName: userName });
+        cbtn.disabled = false; cbtn.textContent = 'Check Out';
+        if (!res.success) alert('Error: ' + (res.message || 'unknown')); else alert(res.message || 'Checked out');
+        await refreshAll();
+      }
       const inBtn = ev.target.closest('.checkin-btn');
-      if (outBtn) {
-        const studentId = outBtn.dataset.id;
-        // this is manual checkout from roster (rare) - call checkout by finding pending request for that student
-        alert('Please use the "Check Out" in Transfers column to release to a specific requesting teacher.');
-      } else if (inBtn) {
+      if (inBtn) {
         const studentId = inBtn.dataset.id;
         inBtn.disabled = true; inBtn.textContent = 'Checking in...';
-        const res = await apiGet('checkinStudent', { studentId, teacherName: classroomName });
-        await refreshAll();
+        const res = await api('checkinStudent', { studentId, teacherName: userName });
         inBtn.disabled = false; inBtn.textContent = 'Check In';
-        if (res.success) {
-          let msg = res.message || 'Checked in';
+        if (!res.success) alert('Error: ' + (res.message || 'unknown'));
+        else {
+          alert(res.message || 'Checked in');
           if (res.promoted && res.promoted.promoted) {
-            msg += '\\nPromoted: ' + res.promoted.teacher + ' (times: ' + res.promoted.timesAssigned + ')';
+            console.log('Suggested next pending:', res.promoted);
           }
-          alert(msg);
-        } else {
-          alert('Error: ' + (res.message || 'unknown'));
         }
+        await refreshAll();
       }
-    });
-
-    document.getElementById('tutor-request-btn').addEventListener('click', async () => {
-      const grade = document.getElementById('tutor-grade').value.trim();
-      const reqs = document.getElementById('tutor-reqs').value.trim();
-      const desc = document.getElementById('tutor-desc').value.trim();
-      document.getElementById('tutor-request-btn').disabled = true;
-      document.getElementById('tutor-status').textContent = 'Submitting...';
-      const res = await apiGet('addTutorRequest', { classroom: classroomName, grade, requirements: reqs, description: desc, requestedBy: classroomName });
-      document.getElementById('tutor-request-btn').disabled = false;
-      document.getElementById('tutor-status').textContent = res.message || (res.success ? 'Requested' : 'Error');
     });
 
     await refreshAll();
   }
 
-  // refresh roster, queue, transfers
   async function refreshAll() {
+    await loadTransfers();
     await loadRoster();
     await loadQueue();
-    await loadTransfers();
   }
 
   async function loadTransfers() {
-    checkoutEl.innerHTML = '<div style="padding:8px;color:#aaa">Loading...</div>';
-    checkinEl.innerHTML = '<div style="padding:8px;color:#aaa">Loading...</div>';
-    const q = await apiGet('getQueue', { teacher: classroomName });
-    // checkout: show fromTeacher==me where status pending
-    if (q.checkout && q.checkout.length) {
-      checkoutEl.innerHTML = q.checkout.map(e => `
-        <div style="padding:6px;border-bottom:1px solid rgba(255,255,255,0.03); display:flex; justify-content:space-between; align-items:center;">
-          <div><strong>${escapeHtml(e.firstName)} ${escapeHtml(e.lastName)}</strong><div style="color:#9aa;font-size:0.95rem;">To: ${escapeHtml(e.toTeacher)} • Priority: ${escapeHtml(e.priority)}</div></div>
+    checkoutList.innerHTML = '<div style="padding:8px;color:#aaa">Loading...</div>';
+    incomingPendingList.innerHTML = '';
+    incomingReadyList.innerHTML = '';
+    const resp = await api('getTransfers', { teacher: userName });
+    if (resp.checkout && resp.checkout.length) {
+      checkoutList.innerHTML = resp.checkout.map(e => `
+        <div style="padding:8px;border-bottom:1px solid rgba(255,255,255,0.03);display:flex;justify-content:space-between;align-items:center;">
+          <div><strong>${escapeHtml(e.firstName)} ${escapeHtml(e.lastName)}</strong><div style="color:#9aa">To: ${escapeHtml(e.toTeacher)} • Priority: ${escapeHtml(e.priority)}</div></div>
           <div><button class="checkout-btn carousel-button" data-row="${escapeHtml(e.rowIndex)}">Check Out</button></div>
         </div>
       `).join('');
-    } else {
-      checkoutEl.innerHTML = '<div style="padding:8px;color:#aaa">No pending outgoing requests.</div>';
-    }
-    // checkin: show toTeacher==me where status pending (waiting for home teacher to checkout)
-    if (q.checkin && q.checkin.length) {
-      checkinEl.innerHTML = q.checkin.map(e => `
-        <div style="padding:6px;border-bottom:1px solid rgba(255,255,255,0.03);">
-          <strong>${escapeHtml(e.firstName)} ${escapeHtml(e.lastName)}</strong>
-          <div style="color:#9aa;font-size:0.95rem;">From: ${escapeHtml(e.fromTeacher)} • Priority: ${escapeHtml(e.priority)} • Requested at: ${escapeHtml(e.requestedAt)}</div>
-          <div style="color:#ccc;font-size:0.9rem;">Waiting for home teacher to check out</div>
+    } else checkoutList.innerHTML = '<div style="padding:8px;color:#aaa">No outgoing requests.</div>';
+
+    if (resp.incomingPending && resp.incomingPending.length) {
+      incomingPendingList.innerHTML = resp.incomingPending.map(e => `<div style="padding:6px;border-bottom:1px dashed rgba(255,255,255,0.02)">${escapeHtml(e.firstName)} ${escapeHtml(e.lastName)} • From: ${escapeHtml(e.fromTeacher)} • Priority: ${escapeHtml(e.priority)}</div>`).join('');
+    } else incomingPendingList.innerHTML = '<div style="padding:6px;color:#aaa">No incoming requests waiting.</div>';
+
+    if (resp.incomingReady && resp.incomingReady.length) {
+      incomingReadyList.innerHTML = resp.incomingReady.map(a => `
+        <div style="padding:8px;border-bottom:1px solid rgba(255,255,255,0.03);display:flex;justify-content:space-between;align-items:center;">
+          <div><strong>${escapeHtml(a.firstName)} ${escapeHtml(a.lastName)}</strong><div style="color:#9aa">Times remaining: ${escapeHtml(a.timesRemaining)} • Priority: ${escapeHtml(a.priority)}</div></div>
+          <div><button class="checkin-btn carousel-button" data-id="${escapeHtml(a.studentId)}">Check In</button></div>
         </div>
       `).join('');
-    } else {
-      checkinEl.innerHTML = '<div style="padding:8px;color:#aaa">No incoming pending requests.</div>';
-    }
-  }
-
-  async function loadQueue() {
-    queueEl.innerHTML = '<div style="padding:8px;color:#aaa">Loading...</div>';
-    const q = await apiGet('getQueue', { teacher: classroomName });
-    const all = (q.checkout || []).concat(q.checkin || []);
-    if (!all.length) { queueEl.innerHTML = '<div style="padding:8px;color:#aaa">No requests.</div>'; return; }
-    queueEl.innerHTML = all.map(e => `
-      <div style="padding:6px;border-bottom:1px solid rgba(255,255,255,0.03);">
-        <strong>${escapeHtml(e.firstName)} ${escapeHtml(e.lastName)}</strong>
-        <div style="color:#9aa;font-size:0.95rem;">From: ${escapeHtml(e.fromTeacher)} → To: ${escapeHtml(e.toTeacher)} • Priority: ${escapeHtml(e.priority)}</div>
-      </div>
-    `).join('');
+    } else incomingReadyList.innerHTML = '<div style="padding:6px;color:#aaa">No students ready to check in.</div>';
   }
 
   async function loadRoster() {
-    rosterEl.innerHTML = '<div style="padding:8px;color:#aaa">Loading roster...</div>';
-    const r = await apiGet('getClassroom', { teacher: classroomName });
-    if (!r || !r.students || r.students.length === 0) { rosterEl.innerHTML = '<div style="padding:8px;color:#aaa">You have no students assigned yet.</div>'; return; }
-    rosterEl.innerHTML = r.students.map(s => `
-      <div style="padding:8px;border-bottom:1px solid rgba(0,191,255,0.04); display:flex; justify-content:space-between; align-items:center;">
-        <div>
-          <strong>${escapeHtml(s.firstName)} ${escapeHtml(s.lastName)}</strong>
-          <div style="color:#9aa">Grade ${escapeHtml(s.grade)} • Status: ${escapeHtml(s.status || 'in')} • Times Remaining: ${escapeHtml(s.timesRemaining || '')}</div>
-          <div style="color:#9aa">Origin: ${escapeHtml(s.sourceSheet || '')} ${s.isInitial ? '• (Initial)' : ''} ${s.outTo ? '• Out to: ' + escapeHtml(s.outTo) : ''}</div>
-        </div>
-        <div style="display:flex;flex-direction:column; gap:8px;">
-          ${s.status === 'in' ? `<button class="checkin-btn carousel-button" data-id="${escapeHtml(s.studentId)}">Check In</button>` : `<button class="carousel-button" disabled>Out</button>`}
-        </div>
+    rosterList.innerHTML = '<div style="padding:8px;color:#aaa">Loading roster...</div>';
+    const r = await api('getClassroom', { teacher: userName });
+    if (!r || !r.students || r.students.length === 0) { rosterList.innerHTML = '<div style="padding:8px;color:#aaa">No students assigned to your classroom.</div>'; return; }
+    rosterList.innerHTML = r.students.map(s => `
+      <div style="padding:8px;border-bottom:1px solid rgba(255,255,255,0.03);">
+        <strong>${escapeHtml(s.firstName)} ${escapeHtml(s.lastName)}</strong>
+        <div style="color:#9aa">Grade ${escapeHtml(s.grade)} • Status: ${escapeHtml(s.status || 'in')} ${s.isInitial ? '• (Initial)' : ''} ${s.outTo ? '• Out to: ' + escapeHtml(s.outTo) : ''}</div>
       </div>
     `).join('');
+  }
+
+  async function loadQueue() {
+    const q = await api('getQueue', { teacher: userName });
+    if (!q || !q.queue || q.queue.length === 0) { queueList.innerHTML = '<div style="padding:8px;color:#aaa">No requests.</div>'; return; }
+    queueList.innerHTML = q.queue.map(e => `<div style="padding:8px;border-bottom:1px dashed rgba(255,255,255,0.03)"><strong>${escapeHtml(e.firstName)} ${escapeHtml(e.lastName)}</strong><div style="color:#9aa">From: ${escapeHtml(e.fromTeacher)} → To: ${escapeHtml(e.toTeacher)} • ${escapeHtml(e.priority)}</div></div>`).join('');
   }
 
   function studentRowHtml(s) {
     return `
-      <div class="student-row" data-id="${escapeHtml(s.id)}" data-first="${escapeHtml(s.firstName)}" data-last="${escapeHtml(s.lastName)}" data-grade="${escapeHtml(s.grade)}" data-row="${escapeHtml(s.rowNumber)}" style="padding:8px;border-bottom:1px solid rgba(0,191,255,0.04); display:flex; align-items:center; gap:12px;">
-        <div style="flex:1;">
-          <div style="font-weight:700">${escapeHtml(s.firstName)} ${escapeHtml(s.lastName)}</div>
-          <div style="color:#9aa; font-size:0.95rem;">Grade ${escapeHtml(s.grade)}</div>
+      <div class="student-row" data-id="${escapeHtml(s.id)}" data-first="${escapeHtml(s.firstName)}" data-last="${escapeHtml(s.lastName)}" data-grade="${escapeHtml(s.grade)}" style="padding:8px;border-bottom:1px solid rgba(255,255,255,0.03); display:flex; justify-content:space-between; align-items:center;">
+        <div>
+          <strong>${escapeHtml(s.firstName)} ${escapeHtml(s.lastName)}</strong><br><small style="color:#9aa">Grade ${escapeHtml(s.grade)}</small>
         </div>
         <div style="display:flex; gap:8px; align-items:center;">
-          <select class="times-select" style="padding:6px; border-radius:6px;">
+          <select class="times" style="padding:6px; border-radius:6px;">
             <option value="1">1</option><option value="2">2</option><option value="3">3</option><option value="4">4</option><option value="5">5</option>
           </select>
-          <select class="priority-select" style="padding:6px; border-radius:6px;">
+          <select class="priority" style="padding:6px; border-radius:6px;">
             <option value="not important">Not Important</option>
             <option value="important">Important</option>
             <option value="critical">Critical</option>
           </select>
-          <button class="add-btn carousel-button">Request</button>
-          <button class="add-initial-btn carousel-button">Add as Initial</button>
+          <button class="request-btn carousel-button" data-id="${escapeHtml(s.id)}" data-first="${escapeHtml(s.firstName)}" data-last="${escapeHtml(s.lastName)}" data-grade="${escapeHtml(s.grade)}">Add</button>
         </div>
       </div>
     `;
   }
 
-  // helpers
   function debounce(fn, ms) { let t; return function() { clearTimeout(t); const args = arguments; t = setTimeout(() => fn.apply(this, args), ms); }; }
   function escapeHtml(s) { return (s||'').toString().replaceAll('&','&amp;').replaceAll('<','&lt;').replaceAll('>','&gt;').replaceAll('"','&quot;'); }
 
